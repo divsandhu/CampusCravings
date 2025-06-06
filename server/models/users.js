@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtual field for isAdmin
+userSchema.virtual('isAdmin').get(function() {
+  return this.email === process.env.ADMIN_EMAIL;
 });
 
 const User = mongoose.model('User', userSchema);

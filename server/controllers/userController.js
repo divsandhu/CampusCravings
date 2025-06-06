@@ -62,6 +62,7 @@ export const loginUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      isAdmin: user.email === process.env.ADMIN_EMAIL,
       token: generateToken(user._id)
     });
   } catch (error) {
@@ -78,7 +79,10 @@ export const getUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+    res.json({
+      ...user.toObject(),
+      isAdmin: user.email === process.env.ADMIN_EMAIL
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

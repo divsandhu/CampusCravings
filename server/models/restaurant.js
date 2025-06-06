@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './users.js';
 
 const restaurantSchema = new mongoose.Schema({
   name: {
@@ -36,9 +37,21 @@ const restaurantSchema = new mongoose.Schema({
 });
 
 // Update the updatedAt timestamp before saving
-restaurantSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
+restaurantSchema.pre('save', async function(next) {
+  try {
+    this.updatedAt = Date.now();
+    
+    // Check if this is a new restaurant
+    if (this.isNew) {
+      const creator = await User.findById(this.createdBy);
+      if (!creator || creator.email !== process.env.ADMIN_EMAIL) {
+        throw new Error('Only admin can create restaurants');
+      }
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);

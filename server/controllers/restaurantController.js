@@ -44,7 +44,7 @@ export const createRestaurant = async (req, res) => {
       location,
       description,
       images,
-      createdBy: req.user._id // Will be set by auth middleware
+      createdBy: req.user._id 
     });
     
     res.status(201).json(restaurant);
