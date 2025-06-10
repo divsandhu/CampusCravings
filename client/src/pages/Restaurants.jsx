@@ -60,7 +60,7 @@ const Restaurants = () => {
           <div key={restaurant._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
             <div className="relative h-48">
               <img
-                src={restaurant.image || 'https://via.placeholder.com/400x300?text=Restaurant'}
+                src={restaurant.images && restaurant.images.length > 0 ? restaurant.images[0] : 'https://via.placeholder.com/400x300?text=Restaurant'}
                 alt={restaurant.name}
                 className="w-full h-full object-cover"
               />

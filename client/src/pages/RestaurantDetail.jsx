@@ -84,6 +84,28 @@ const RestaurantDetail = () => {
     }
   };
 
+  const handleDeleteRestaurant = async () => {
+    if (!window.confirm('Are you sure you want to delete this restaurant?')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:5000/api/restaurants/${id}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      });
+      toast.success('Restaurant deleted successfully');
+      navigate('/restaurants');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete restaurant');
+    }
+  };
+
+  const handleEditClick = () => {
+    navigate(`/edit-restaurant/${id}`);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -104,12 +126,32 @@ const RestaurantDetail = () => {
             />
             <div className="p-6">
               <div className="flex justify-between items-start">
-                <h1 className="text-3xl font-bold text-gray-900">{restaurant.name}</h1>
-                <span className="bg-blue-100 text-blue-800 text-lg font-medium px-3 py-1 rounded">
-                  {restaurant.rating.toFixed(1)} ★
-                </span>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">{restaurant.name}</h1>
+                  <p className="text-gray-600 mt-2">{restaurant.location}</p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="bg-blue-100 text-blue-800 text-lg font-medium px-3 py-1 rounded">
+                    {restaurant.rating.toFixed(1)} ★
+                  </span>
+                  {user?.isAdmin && (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={handleEditClick}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={handleDeleteRestaurant}
+                        className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <p className="text-gray-600 mt-2">{restaurant.location}</p>
               <p className="text-gray-700 mt-4">{restaurant.description}</p>
             </div>
           </div>

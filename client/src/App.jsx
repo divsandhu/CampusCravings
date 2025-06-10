@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Restaurants from './pages/Restaurants';
 import RestaurantDetail from './pages/RestaurantDetail';
 import AddRestaurant from './pages/AddRestaurant';
+import EditRestaurant from './pages/EditRestaurant';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -29,6 +30,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <AddRestaurant />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit-restaurant/:id"
+                element={
+                  <ProtectedRoute>
+                    <EditRestaurant />
                   </ProtectedRoute>
                 }
               />

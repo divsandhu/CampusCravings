@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const AddRestaurant = () => {
+const EditRestaurant = () => {
+  const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -15,28 +16,52 @@ const AddRestaurant = () => {
     images: ['']
   });
 
-  // Redirect if not admin
-  if (!user?.isAdmin) {
-    navigate('/restaurants');
-    return null;
-  }
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/restaurants/${id}`);
+        setFormData({
+          name: response.data.name,
+          location: response.data.location,
+          description: response.data.description,
+          images: response.data.images?.length > 0 ? response.data.images : ['']
+        });
+      } catch (error) {
+        toast.error('Failed to load restaurant details');
+        navigate('/restaurants');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurant();
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/restaurants', formData, {
-        headers: {
-          Authorization: `Bearer ${user.token}`
+      await axios.put(
+        `http://localhost:5000/api/restaurants/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
         }
-      });
-      toast.success('Restaurant added successfully!');
-      navigate('/restaurants');
+      );
+      toast.success('Restaurant updated successfully');
+      navigate(`/restaurants/${id}`);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add restaurant');
-    } finally {
-      setLoading(false);
+      toast.error(error.response?.data?.message || 'Failed to update restaurant');
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleImageChange = (index, value) => {
@@ -54,39 +79,58 @@ const AddRestaurant = () => {
     setFormData({ ...formData, images: newImages });
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Add New Restaurant</h1>
-      
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Restaurant</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Restaurant Name</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Restaurant Name
+          </label>
           <input
             type="text"
-            required
+            id="name"
+            name="name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={handleChange}
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Location</label>
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            Location
+          </label>
           <input
             type="text"
-            required
+            id="location"
+            name="location"
             value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            onChange={handleChange}
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
           <textarea
-            required
+            id="description"
+            name="description"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={handleChange}
+            required
             rows="4"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
@@ -127,16 +171,24 @@ const AddRestaurant = () => {
           </button>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          {loading ? 'Adding...' : 'Add Restaurant'}
-        </button>
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            onClick={() => navigate(`/restaurants/${id}`)}
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Save Changes
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddRestaurant; 
+export default EditRestaurant; 
