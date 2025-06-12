@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const EditRestaurant = () => {
   const { id } = useParams();
   const { user } = useAuth();
@@ -19,7 +21,7 @@ const EditRestaurant = () => {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/restaurants/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/restaurants/${id}`);
         setFormData({
           name: response.data.name,
           location: response.data.location,
@@ -41,7 +43,7 @@ const EditRestaurant = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/restaurants/${id}`,
+        `${API_BASE_URL}/api/restaurants/${id}`,
         formData,
         {
           headers: {
@@ -191,4 +193,4 @@ const EditRestaurant = () => {
   );
 };
 
-export default EditRestaurant; 
+export default EditRestaurant;

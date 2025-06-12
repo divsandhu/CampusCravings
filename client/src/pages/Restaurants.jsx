@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +13,7 @@ const Restaurants = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/restaurants');
+        const response = await axios.get(`${API_BASE_URL}/api/restaurants`);
         setRestaurants(response.data);
         setLoading(false);
       } catch (err) {
@@ -96,4 +98,4 @@ const Restaurants = () => {
   );
 };
 
-export default Restaurants; 
+export default Restaurants;

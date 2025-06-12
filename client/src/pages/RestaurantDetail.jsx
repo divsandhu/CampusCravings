@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const RestaurantDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
@@ -20,7 +22,7 @@ const RestaurantDetail = () => {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/restaurants/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/restaurants/${id}`);
         setRestaurant(response.data);
         await fetchReviews();
       } catch (error) {
@@ -36,7 +38,7 @@ const RestaurantDetail = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/reviews/restaurant/${id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/reviews/restaurant/${id}`);
       setReviews(response.data);
     } catch (error) {
       toast.error('Failed to load reviews');
@@ -52,7 +54,7 @@ const RestaurantDetail = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/reviews/restaurant/${id}`, reviewForm, {
+      await axios.post(`${API_BASE_URL}/api/reviews/restaurant/${id}`, reviewForm, {
         headers: {
           Authorization: `Bearer ${user.token}`
         }
@@ -73,7 +75,7 @@ const RestaurantDetail = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/reviews/${reviewId}/like`, {}, {
+      await axios.put(`${API_BASE_URL}/api/reviews/${reviewId}/like`, {}, {
         headers: {
           Authorization: `Bearer ${user.token}`
         }
@@ -90,7 +92,7 @@ const RestaurantDetail = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/restaurants/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/restaurants/${id}`, {
         headers: {
           Authorization: `Bearer ${user.token}`
         }
@@ -253,4 +255,4 @@ const RestaurantDetail = () => {
   );
 };
 
-export default RestaurantDetail; 
+export default RestaurantDetail;

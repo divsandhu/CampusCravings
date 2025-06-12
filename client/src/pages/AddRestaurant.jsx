@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const AddRestaurant = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ const AddRestaurant = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/restaurants', formData, {
+      await axios.post(`${API_BASE_URL}/api/restaurants`, formData, {
         headers: {
           Authorization: `Bearer ${user.token}`
         }
@@ -139,4 +141,4 @@ const AddRestaurant = () => {
   );
 };
 
-export default AddRestaurant; 
+export default AddRestaurant;

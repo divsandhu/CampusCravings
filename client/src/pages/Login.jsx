@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -20,7 +22,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', formData);
+      const response = await axios.post(`${API_BASE_URL}/api/users/login`, formData);
       login(response.data);
       toast.success('Login successful!');
       navigate('/');
@@ -91,4 +93,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

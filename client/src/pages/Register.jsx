@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -26,7 +28,7 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', {
+      const response = await axios.post(`${API_BASE_URL}/api/users/register`, {
         name: formData.name,
         email: formData.email,
         password: formData.password
@@ -135,4 +137,4 @@ const Register = () => {
   );
 };
 
-export default Register; 
+export default Register;
