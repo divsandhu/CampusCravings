@@ -27,3 +27,4 @@ dist-ssr
 .env.production
 client/.env
 client/.env.production
+client/node_modules
