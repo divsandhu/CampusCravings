@@ -107,8 +107,9 @@ export const deleteReview = async (req, res) => {
       return res.status(404).json({ message: 'Review not found' });
     }
 
-    // Check if user is the creator
-    if (review.createdBy.toString() !== req.user._id.toString()) {
+    // Check if user is the creator or admin
+    const isAdmin = req.user.email === process.env.ADMIN_EMAIL;
+    if (review.createdBy.toString() !== req.user._id.toString() && !isAdmin) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 

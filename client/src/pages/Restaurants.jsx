@@ -76,7 +76,7 @@ const Restaurants = () => {
               <p className="text-gray-600 mb-4">{restaurant.location}</p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  {restaurant.reviews?.length || 0} reviews
+                  {restaurant.reviewCount || 0} reviews
                 </span>
                 <Link
                   to={`/restaurants/${restaurant._id}`}

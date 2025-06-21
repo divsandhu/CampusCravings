@@ -1,14 +1,33 @@
 import Restaurant from '../models/restaurant.js';
+import Review from '../models/review.js';
 
 // @desc    Get all restaurants
 // @route   GET /api/restaurants
 // @access  Public
 export const getRestaurants = async (req, res) => {
   try {
+    // Get all restaurants
     const restaurants = await Restaurant.find()
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
-    res.json(restaurants);
+
+    // Get review counts for all restaurants
+    const reviewCounts = await Review.aggregate([
+      { $group: { _id: '$restaurant', count: { $sum: 1 } } }
+    ]);
+    const reviewCountMap = {};
+    reviewCounts.forEach(rc => {
+      reviewCountMap[rc._id.toString()] = rc.count;
+    });
+
+    // Add reviewCount to each restaurant
+    const restaurantsWithReviewCount = restaurants.map(r => {
+      const obj = r.toObject();
+      obj.reviewCount = reviewCountMap[r._id.toString()] || 0;
+      return obj;
+    });
+
+    res.json(restaurantsWithReviewCount);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,6 +1,7 @@
 import User from '../models/users.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 // @desc    Register a new user
 // @route   POST /api/users/register
@@ -115,6 +116,56 @@ export const updateUserProfile = async (req, res) => {
       email: updatedUser.email,
       token: generateToken(updatedUser._id)
     });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// @desc    Forgot password (send reset link)
+// @route   POST /api/users/forgot-password
+// @access  Public
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      // For security, always return success
+      return res.status(200).json({ message: 'If this email is registered, a reset link has been sent.' });
+    }
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordToken = resetTokenHash;
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await user.save();
+    // TODO: Send email with link containing the resetToken
+    // e.g., `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`
+    return res.status(200).json({ message: 'If this email is registered, a reset link has been sent.' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// @desc    Reset password
+// @route   POST /api/users/reset-password
+// @access  Public
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const resetTokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    return res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
