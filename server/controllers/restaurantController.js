@@ -83,8 +83,9 @@ export const updateRestaurant = async (req, res) => {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
     
-    // Check if user is the creator
-    if (restaurant.createdBy.toString() !== req.user._id.toString()) {
+    // Check if user is the creator or admin
+    const isAdmin = req.user.email === process.env.ADMIN_EMAIL;
+    if (restaurant.createdBy.toString() !== req.user._id.toString() && !isAdmin) {
       return res.status(401).json({ message: 'Not authorized' });
     }
     
@@ -111,8 +112,9 @@ export const deleteRestaurant = async (req, res) => {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
     
-    // Check if user is the creator
-    if (restaurant.createdBy.toString() !== req.user._id.toString()) {
+    // Check if user is the creator or admin
+    const isAdmin = req.user.email === process.env.ADMIN_EMAIL;
+    if (restaurant.createdBy.toString() !== req.user._id.toString() && !isAdmin) {
       return res.status(401).json({ message: 'Not authorized' });
     }
     

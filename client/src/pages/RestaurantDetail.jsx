@@ -108,6 +108,23 @@ const RestaurantDetail = () => {
     navigate(`/edit-restaurant/${id}`);
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) {
+      return;
+    }
+    try {
+      await axios.delete(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      });
+      toast.success('Review deleted successfully');
+      fetchReviews();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete review');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -217,17 +234,27 @@ const RestaurantDetail = () => {
                         <span className="text-gray-600">{review.rating}</span>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleLikeReview(review._id)}
-                      className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-                        review.likes.includes(user?._id)
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      <span>❤</span>
-                      <span>{review.likes.length}</span>
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleLikeReview(review._id)}
+                        className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
+                          review.likes.includes(user?._id)
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        <span>❤</span>
+                        <span>{review.likes.length}</span>
+                      </button>
+                      {user?.isAdmin && (
+                        <button
+                          onClick={() => handleDeleteReview(review._id)}
+                          className="ml-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-gray-700 mt-2">{review.comment}</p>
                   {review.images && review.images.length > 0 && (
