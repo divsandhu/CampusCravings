@@ -1,9 +1,8 @@
 # Campus Cravings 🍽️
 
 **Campus Cravings** is a web platform designed to let students and visitors of **Chandigarh University** discover, rate, and review cafes and restaurants within the campus. The aim is to provide honest, user-generated feedback to help everyone find the best food spots around.
-
-> 🔨 Project is in early development. More cafes will be added in future updates.
-
+More cafes will be added in future updates.
+The project is live - https://campus-cravings-wheat.vercel.app/
 ---
 
 ## 🚀 Features
