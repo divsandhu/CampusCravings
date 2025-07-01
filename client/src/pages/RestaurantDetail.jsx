@@ -176,7 +176,7 @@ const RestaurantDetail = () => {
           </div>
 
           {/* Review Form */}
-          {user && (
+          {user ? (
             <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Write a Review</h2>
               <form onSubmit={handleReviewSubmit}>
@@ -215,6 +215,25 @@ const RestaurantDetail = () => {
                   Submit Review
                 </button>
               </form>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Sign up or log in to add a review</h2>
+              <p className="mb-4 text-gray-700">You need to be signed in to write a review for this restaurant.</p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate('/register')}
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                >
+                  Sign Up
+                </button>
+              </div>
             </div>
           )}
 
