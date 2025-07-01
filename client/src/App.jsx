@@ -12,6 +12,7 @@ import EditRestaurant from './pages/EditRestaurant';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
               />
             </Routes>
           </main>
+          <Analytics />
         </div>
       </Router>
     </AuthProvider>
