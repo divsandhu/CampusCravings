@@ -7,6 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,10 +27,20 @@ const Restaurants = () => {
     fetchRestaurants();
   }, []);
 
-  const filteredRestaurants = restaurants.filter(restaurant => 
-    restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    restaurant.location.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 400);
+  
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+  
+
+  const filteredRestaurants = restaurants.filter(restaurant =>
+    restaurant.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    restaurant.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
+  
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center text-red-600 mt-8">{error}</div>;
