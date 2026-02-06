@@ -5,7 +5,7 @@
 It aims to provide honest, user-generated feedback to help everyone find the best food spots around.  
 More cafes will be added in future updates.
 
-🔗 **Live Demo:** [https://campus-cravings-wheat.vercel.app/](https://campus-cravings-wheat.vercel.app/)
+🔗 **Live Link:** [https://campus-cravings-wheat.vercel.app/](https://campus-cravings-wheat.vercel.app/)
 
 ---
 
